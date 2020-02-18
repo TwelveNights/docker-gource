@@ -1,33 +1,26 @@
-FROM ubuntu:14.04
-
-# Set the reset cache variable
-ENV REFRESHED_AT 2015-07-30
+FROM ubuntu:18.04
 
 # Update the repositories list and install software to add a PPA
 RUN apt-get update && \
     apt-get install -y software-properties-common && \
-
-# Add the PPA with ffmpeg
-    apt-add-repository -y ppa:mc3man/trusty-media && \
-    apt-get update && \
-
-# Install required software
     apt-get install -y git \
-                       mercurial \
-                       xvfb \
-                       xfonts-base \
-                       xfonts-75dpi \
-                       xfonts-100dpi \
-                       xfonts-cyrillic \
-                       gource \
-                       screen \
-                       ffmpeg
+        mercurial \
+        xvfb \
+        xfonts-base \
+        xfonts-75dpi \
+        xfonts-100dpi \
+        xfonts-cyrillic \
+        gource \
+        screen \
+        ffmpeg && \
+    apt-get -yq autoremove && \
+    apt-get -yq clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /tmp/* && \
+    rm -rf /var/tmp/*
 
 # Add the init script
-ADD ./init.sh /tmp/init.sh
-
-# Set the default title
-ENV TITLE "Example title"
+COPY init.sh /usr/local/bin/init.sh
 
 # Mount volumes
 VOLUME ["/repoRoot", "/avatars", "/results"]
@@ -37,4 +30,4 @@ WORKDIR /repoRoot
 
 # Run the init script by default
 CMD [""]
-ENTRYPOINT ["/tmp/init.sh"]
+ENTRYPOINT ["bash", "/usr/local/bin/init.sh"]
